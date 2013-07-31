@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
+include $(top_srcdir)/config/sortsmill-dist-changelog.am
+
 ACLOCAL_AMFLAGS = -I m4
 
 aclocaldir = $(datadir)/aclocal
@@ -30,55 +32,35 @@ MOSTLYCLEANFILES =
 
 EXTRA_DIST += m4/gnulib-cache.m4
 
-nodist_bin_SCRIPTS += sortsmill-changelogger
+nodist_bin_SCRIPTS += sortsmill-changelogger sortsmill-changeloggerize
 dist_pkgdata_DATA += config/gitlog-to-changelog
-#dist_aclocal_DATA += sortsmill-changelogger.m4
+dist_aclocal_DATA += sortsmill-changelogger.m4
 MOSTLYCLEANFILES += sortsmill-changelogger
 
 sortsmill-changelogger: sortsmill-changelogger.in
-	$(SED) -e 's|@GITLOG_TO_CHANGELOG@|$(pkgdatadir)/gitlog-to-changelog|g' $< > $@-tmp
+	$(SED) -e 's|@GITLOG_TO_CHANGELOG@|$(pkgdatadir)/gitlog-to-changelog|g' \
+		sortsmill-changelogger.in > $@-tmp
 	mv $@-tmp $@
 	chmod +x $@
 
 if HAVE_HELP2MAN
 
-man_MANS += sortsmill-changelogger.1
-CLEANFILES += sortsmill-changelogger.1
+man_MANS += sortsmill-changelogger.1 sortsmill-changeloggerize.1
+CLEANFILES += sortsmill-changelogger.1 sortsmill-changeloggerize.1
+
+MY_HELP2MAN = $(HELP2MAN) --no-info --output=$@				\
+				--help-option='-h' --version-option='-V'	\
+				--source='Sorts Mill'
 
 sortsmill-changelogger.1: sortsmill-changelogger
-	$(HELP2MAN) --no-info --output=$@					\
-		--help-option='-h' --version-option='-V'		\
-		--name='Sorts Mill Changelogger'				\
-	 	--source='Sorts Mill' ./sortsmill-changelogger
+	$(MY_HELP2MAN) --name='Sorts Mill Changelogger'		\
+		./sortsmill-changelogger
+
+sortsmill-changeloggerize.1: sortsmill-changelogger
+	$(MY_HELP2MAN) --name='Sorts Mill Changeloggerize'	\
+		./sortsmill-changeloggerize
 
 endif HAVE_HELP2MAN
-
-#--------------------------------------------------------------------------
-#
-# Make a ChangeLog automatically when doing a `make dist'.
-#
-# FIXME: This snippet should be made easily reusable.
-
-dist-hook: dist-changelog
-
-.PHONY: dist-changelog
-
-dist-changelog: sortsmill-changelogger
-	@if ./sortsmill-changelogger -C $(top_srcdir) > ChangeLog-tmp; then \
-		mv -f ChangeLog-tmp $(distdir)/ChangeLog; \
-	else \
-		echo "*************************************************************************"; \
-		echo "*****  I could not automatically remake the ChangeLog,              *****"; \
-		echo "*****  because the sources are not in a compatible VCS repository.  *****"; \
-		echo "*****                                                               *****"; \
-		echo "*****  Whether that is a problem is your decision entirely. :)      *****"; \
-		echo "*****                                                               *****"; \
-		echo "*****  (This message is expected to appear at some point during     *****"; \
-		echo "*****  a \`make distcheck'.)                                         *****"; \
-		echo "*************************************************************************"; \
-	fi
-
-CLEANFILES += ChangeLog-tmp
 
 #--------------------------------------------------------------------------
 #

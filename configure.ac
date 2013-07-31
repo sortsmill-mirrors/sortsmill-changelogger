@@ -45,12 +45,13 @@ VERSION_PATCH=`AS_ECHO(["${PACKAGE_VERSION}"]) | sed -e 's/^[[0-9]][[0-9]]*\.[[0
 VERSION_EXTRA=`AS_ECHO(["${PACKAGE_VERSION}"]) | sed -e 's/^[[0-9]][[0-9]]*\.[[0-9]][[0-9]]*\.[[0-9]][[0-9]]*\(.*\)/\1/' \
                                                      -e 's/^_//'`
 VERSION_EXTRA_SHORT=`AS_ECHO(["${VERSION_EXTRA}"]) | sed -e 's/alpha/a/' -e 's/beta/b/'`
+PACKAGE_VERSION_SHORT=`AS_ECHO(["${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_EXTRA_SHORT}"])`
 AC_SUBST([VERSION_MAJOR])
 AC_SUBST([VERSION_MINOR])
 AC_SUBST([VERSION_PATCH])
 AC_SUBST([VERSION_EXTRA])
 AC_SUBST([VERSION_EXTRA_SHORT])
-
+AC_SUBST([PACKAGE_VERSION_SHORT])
 
 #--------------------------------------------------------------------------
 #
@@ -156,6 +157,14 @@ fi
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([sortsmill-changelogger.in])
+AC_CONFIG_FILES([sortsmill-changeloggerize],
+        [chmod +x sortsmill-changeloggerize])
+
+# Bootstrap our own changeloggerization.
+AC_CONFIG_COMMANDS([config/sortsmill-dist-changelog.am],[
+   ${SHELL} sortsmill-changeloggerize.in -d config
+])
+AC_SUBST([SORTSMILL_CHANGELOGGER],["\@S|@(top_builddir)/sortsmill-changelogger"])
 
 AC_OUTPUT
 

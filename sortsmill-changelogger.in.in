@@ -30,12 +30,27 @@ set -e
 
 progname=`basename "${0}"`
 
+ignoring=yes
+while test "${ignoring}" = yes; do
+    if test -z "${1}"; then
+        ignoring=no
+    else
+        case "${1}" in
+            -*)
+                ignoring=no
+                ;;
+            *)
+                shift
+                ;;
+        esac
+    fi
+done
+
 changedir_wanted=no
 help_wanted=no
 version_wanted=no
 
-while getopts 'C:hV' flag
-do
+while getopts 'C:hV' flag; do
     case "${flag}" in
         C)
             changedir_wanted=yes
@@ -60,12 +75,14 @@ do
 done
 
 echo_help() {
-    echo "Usage: ${progname} [OPTION]..."
-    echo "Creates a GNU-style ChangeLog file from a version control log."
+    echo "Usage: ${progname} [IGNORED]... [OPTION]..."
+    echo "Create a GNU-style ChangeLog file from a version control log."
     echo ""
     echo "  -C DIR   change to repository base directory DIR"
     echo "  -h       display this help and exit"
     echo "  -V       output version information and exit"
+    echo ""
+    echo "The optional arguments \`IGNORED' are ignored."
     echo ""
     echo "Unless you use the '-C' flag, ${progname} expects to be run"
     echo "in a repository's base directory."
