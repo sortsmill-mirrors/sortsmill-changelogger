@@ -124,7 +124,7 @@ echo_changelog() {
             @BZR_LOG@ --gnu-changelog
             ;;
         git)
-            @GIT_LOG@ | @SHELL@ @GITLOG_TO_CHANGELOG@
+            @SHELL@ @GITLOG_TO_CHANGELOG@
             ;;
         *)
             echo "Internal error" >&2
