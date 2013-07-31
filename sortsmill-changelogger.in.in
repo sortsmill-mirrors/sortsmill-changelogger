@@ -1,0 +1,134 @@
+#!@SHELL@
+# -*- sh -*-
+
+copyright_string="Copyright (C) 2013 Khaled Hosny and Barry Schwartz"
+
+# Copyright (C) 2013 Khaled Hosny and Barry Schwartz
+# This file is part of Sorts Mill Changelogger.
+# 
+# Sorts Mill Changelogger is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# 
+# Sorts Mill Changelogger is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, see <http://www.gnu.org/licenses/>.
+
+#--------------------------------------------------------------------------
+#
+# FIXME: Strive for more uniformity in the log formats produced by the
+# different VCS programs.
+#
+#--------------------------------------------------------------------------
+
+set -e
+
+progname=`basename "${0}"`
+
+changedir_wanted=no
+help_wanted=no
+version_wanted=no
+
+while getopts 'C:hV' flag
+do
+    case "${flag}" in
+        C)
+            changedir_wanted=yes
+            changedir="${OPTARG}"
+            if test -z "${changedir}"; then
+                echo "${progname}: '-C' requires a non-empty argument."
+                echo "Try '""${progname}"" -h' for more information."
+                exit 3
+            fi
+            ;;
+        h)
+            help_wanted=yes
+            ;;
+        V)
+            version_wanted=yes
+            ;;
+        ?)
+            echo "Try '""${progname}"" -h' for more information."
+            exit 2
+            ;;
+    esac
+done
+
+echo_help() {
+    echo "Usage: ${progname} [OPTION]..."
+    echo "Creates a GNU-style ChangeLog file from a version control log."
+    echo ""
+    echo "  -C DIR   change to repository base directory DIR"
+    echo "  -h       display this help and exit"
+    echo "  -V       output version information and exit"
+    echo ""
+    echo "Unless you use the '-C' flag, ${progname} expects to be run"
+    echo "in a repository's base directory."
+    echo ""
+    echo "Report @PACKAGE@ bugs at @PACKAGE_BUGREPORT@"
+    echo "@PACKAGE_NAME@ home page: @PACKAGE_URL@"
+}
+
+echo_version() {
+    echo "@PACKAGE@ @VERSION@"
+    echo "${copyright_string}"
+    echo ""
+    echo "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>."
+    echo "This is free software: you are free to change and redistribute it."
+    echo "There is NO WARRANTY, to the extent permitted by law."
+    echo ""
+    echo "Written by Barry Schwartz."
+}
+
+echo_changelog() {
+    if test -d '.hg'; then
+        vcs='hg'
+    elif test -d '.bzr'; then
+        vcs='bzr'
+    elif test -d '.git'; then
+        vcs='git'
+    else
+        echo "${progname}: `pwd` is not the root of a repository we can handle." >&2
+        exit 1
+    fi
+
+    case "${vcs}" in
+        hg)
+            @HG_LOG@ --style=changelog
+            ;;
+        bzr)
+            # FIXME: This does not group changes by date. Can we do
+            # better?
+            @BZR_LOG@ --gnu-changelog
+            ;;
+        git)
+            @GIT_LOG@ | @SHELL@ @GITLOG_TO_CHANGELOG@
+            ;;
+        *)
+            echo "Internal error" >&2
+            exit 99
+            ;;
+    esac
+}
+
+if test x"${help_wanted}" = xyes; then
+    echo_help
+elif test x"${version_wanted}" = xyes; then
+    echo_version
+elif test x"${changedir_wanted}" = xyes; then
+    if cd "${changedir}"; then
+        echo_changelog
+    else
+        echo "${progname}: cannot change directory to ${changedir}." >&2
+        exit 4        
+    fi
+else
+    echo_changelog
+fi
+
+exit 0

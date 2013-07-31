@@ -1,0 +1,42 @@
+SORTSMILL-CHANGELOGGER(1)        User Commands       SORTSMILL-CHANGELOGGER(1)
+
+
+
+NAME
+       sortsmill-changelogger - Sorts Mill Changelogger
+
+SYNOPSIS
+       sortsmill-changelogger [OPTION]...
+
+DESCRIPTION
+       Creates a GNU-style ChangeLog file from a version control log.
+
+       -C DIR change to repository base directory DIR
+
+       -h     display this help and exit
+
+       -V     output version information and exit
+
+       Unless you use the '-C' flag, sortsmill-changelogger expects to be run
+       in a repository's base directory.
+
+AUTHOR
+       Written by Barry Schwartz.
+
+REPORTING BUGS
+       Report sortsmill-changelogger bugs at
+       http://bitbucket.org/sortsmill/sortsmill-changelogger/issues
+       Sorts Mill Changelogger home page:
+       http://bitbucket.org/sortsmill/sortsmill-changelogger
+
+COPYRIGHT
+       Copyright (C) 2013 Khaled Hosny and Barry Schwartz
+
+       License GPLv3+: GNU GPL version 3 or later
+       <http://gnu.org/licenses/gpl.html>.
+       This is free software: you are free to change and redistribute it.
+       There is NO WARRANTY, to the extent permitted by law.
+
+
+
+Sorts Mill                         July 2013         SORTSMILL-CHANGELOGGER(1)
