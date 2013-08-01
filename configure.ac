@@ -26,6 +26,7 @@ AC_INIT([Sorts Mill Changelogger],
 
 AC_CONFIG_SRCDIR([sortsmill-changelogger.in.in])
 
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([config])        dnl Where things like install-sh go.
 AC_CANONICAL_BUILD                 dnl On what platform are we compiling?
 AC_CANONICAL_HOST                  dnl For what platform are we compiling?
@@ -38,19 +39,7 @@ AM_INIT_AUTOMAKE([1.11 dist-xz -Wall -Wno-portability -Werror])
 # V=1" if you need to see the rules.
 AM_SILENT_RULES([yes])
 
-VERSION_MAJOR=`AS_ECHO(["${PACKAGE_VERSION}"]) | sed -e 's/^\([[0-9]][[0-9]]*\).*/\1/'`
-VERSION_MINOR=`AS_ECHO(["${PACKAGE_VERSION}"]) | sed -e 's/^[[0-9]][[0-9]]*\.\([[0-9]][[0-9]]*\).*/\1/'`
-VERSION_PATCH=`AS_ECHO(["${PACKAGE_VERSION}"]) | sed -e 's/^[[0-9]][[0-9]]*\.[[0-9]][[0-9]]*\.\([[0-9]][[0-9]]*\).*/\1/'`
-VERSION_EXTRA=`AS_ECHO(["${PACKAGE_VERSION}"]) | sed -e 's/^[[0-9]][[0-9]]*\.[[0-9]][[0-9]]*\.[[0-9]][[0-9]]*\(.*\)/\1/' \
-                                                     -e 's/^_//'`
-VERSION_EXTRA_SHORT=`AS_ECHO(["${VERSION_EXTRA}"]) | sed -e 's/alpha/a/' -e 's/beta/b/'`
-PACKAGE_VERSION_SHORT=`AS_ECHO(["${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_EXTRA_SHORT}"])`
-AC_SUBST([VERSION_MAJOR])
-AC_SUBST([VERSION_MINOR])
-AC_SUBST([VERSION_PATCH])
-AC_SUBST([VERSION_EXTRA])
-AC_SUBST([VERSION_EXTRA_SHORT])
-AC_SUBST([PACKAGE_VERSION_SHORT])
+StM_ANALYZE_PACKAGE_VERSION
 
 AC_ARG_ENABLE([hg],
    [AS_HELP_STRING([--disable-hg],[do not support Mercurial])],
@@ -76,27 +65,9 @@ AC_PROG_MAKE_SET
 AC_PROG_MKDIR_P
 AC_PROG_SED
 
-# FIXME: Make this reusable by putting it in
-# sortsmill-autoconf-archive.
-#
-# StM_PATH_PROGS_CACHED_AND_PRECIOUS(variable, message, progs-to-check-for, feature-test)
-# ---------------------------------------------------------------------------------------
-AC_DEFUN([StM_PATH_PROGS_CACHED_AND_PRECIOUS],[
-AC_ARG_VAR([$1],[$2])
-# Override the cache if the precious variable $1 is set.
-test -n "${$1}" && unset ac_cv_path_$1
-AC_CACHE_CHECK([for $3],[ac_cv_path_$1],
-   [AC_PATH_PROGS_FEATURE_CHECK([$1],[$3],[
-      if test -n "${$1}"; then
-         # Bypass the test if the precious variable $1 is set.
-         ac_cv_path_$1="${$1}"
-         ac_path_$1_found=:
-      else
-         # Run the test.
-         $4
-      fi ])])
-$1="${ac_cv_path_$1}"
-])
+# This is here simply to pull in the latest version of the macro from
+# the Sorts Mill Autoconf Archive, for redistribution in this package.
+StM_PROG_SORTSMILL_CHANGELOGGER
 
 m4_define([my_m4_first],[m4_car(m4_unquote(m4_split(m4_strip($1))))])
 
