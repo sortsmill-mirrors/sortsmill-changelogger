@@ -16,10 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
-# The minus sign is needed because
-# $(top_srcdir)/config/sortsmill-dist-changelog.am does not exist yet
-# during the initial autoreconf.
--include $(top_srcdir)/config/sortsmill-dist-changelog.am
+include sortsmill-dist-changelog.am
 
 aclocaldir = $(datadir)/aclocal
 
@@ -31,17 +28,29 @@ man_MANS =
 CLEANFILES =
 MOSTLYCLEANFILES =
 
-nodist_bin_SCRIPTS += sortsmill-changelogger sortsmill-changeloggerize
-nodist_pkglibexec_SCRIPTS += git-log-processor
-dist_pkgdata_DATA += map-cmdline.sortsmill-changelog
-dist_aclocal_DATA += sortsmill-changelogger.m4
+nodist_bin_SCRIPTS += sortsmill-changelogger
+nodist_bin_SCRIPTS += sortsmill-changeloggerize
 MOSTLYCLEANFILES += sortsmill-changelogger
+
+nodist_pkglibexec_SCRIPTS += git-log-processor
+
+dist_pkgdata_DATA += sortsmill-dist-changelog.am
+dist_pkgdata_DATA += map-cmdline.sortsmill-changelog
+
+dist_aclocal_DATA += sortsmill-changelogger.m4
 
 sortsmill-changelogger: sortsmill-changelogger.in Makefile
 	$(SED) \
 		-e 's|@DEFAULT_GIT_LOG_PROCESSOR@|$(pkglibexecdir)/git-log-processor|g' \
 		-e 's|@DEFAULT_HG_LOG_STYLE@|$(pkgdatadir)/map-cmdline.sortsmill-changelog|g' \
 		sortsmill-changelogger.in > $@-tmp
+	mv $@-tmp $@
+	chmod +x $@
+
+sortsmill-changeloggerize: sortsmill-changeloggerize.in Makefile
+	$(SED) \
+		-e 's|@DEFAULT_DIST_CHANGELOG_AM@|$(pkgdatadir)/sortsmill-dist-changelog.am|g' \
+		sortsmill-changeloggerize.in > $@-tmp
 	mv $@-tmp $@
 	chmod +x $@
 

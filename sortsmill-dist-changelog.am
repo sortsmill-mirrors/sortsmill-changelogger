@@ -1,0 +1,32 @@
+# -*- mode: automake; tab-width: 4 -*-
+
+# Copyright (C) 2013 Khaled Hosny and Barry Schwartz
+#
+# This file is free software; Khaled Hosny and Barry Schwartz give
+# unlimited permission to copy and/or distribute it, with or without
+# modifications, as long as this notice is preserved.
+
+dist-hook: dist-changelog
+
+.PHONY: dist-changelog
+
+# @code{make distcheck} constructs the source package twice; the
+# second time, at least, no VCS repo will be present, and so the
+# banner message will be echoed. The ChangeLog you actually get,
+# however, should be the same as what you would get from
+# @code{make dist}.
+dist-changelog:
+	@if $(SORTSMILL_CHANGELOGGER) /bin/false -C $(top_srcdir) > ChangeLog-tmp; then \
+		mv -f ChangeLog-tmp $(distdir)/ChangeLog; \
+	else \
+		rm -f ChangeLog-tmp; \
+		echo "*************************************************************************"; \
+		echo "*****  I did not automatically remake the ChangeLog,                *****"; \
+		echo "*****  because the sources are not in a compatible VCS repository,  *****"; \
+		echo "*****  or I could not run sortsmill-changelogger.                   *****"; \
+		echo "*****                                                               *****"; \
+		echo "*****  (Note: This message is expected to appear at some point      *****"; \
+		echo "*****  during a \`make distcheck'.)                                  *****"; \
+		echo "*************************************************************************"; \
+	fi
+
