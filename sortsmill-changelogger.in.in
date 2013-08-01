@@ -21,6 +21,10 @@ copyright_string="Copyright (C) 2013 Khaled Hosny and Barry Schwartz"
 
 #--------------------------------------------------------------------------
 #
+# FIXME: The output from Git makes very long lines. It also has
+# annotations related to hg-git in some way. See if these problems can
+# be resolved.
+#
 # FIXME: Make the output from Bazaar look like the outputs we get from
 # Mercurial or Git (which is just the beautiful Mercurial log output
 # given a particular style template, here achieved in Git via heroic
