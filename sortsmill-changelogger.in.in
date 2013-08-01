@@ -28,7 +28,7 @@ copyright_string="Copyright (C) 2013 Khaled Hosny and Barry Schwartz"
 # FIXME: Make the output from Bazaar look like the outputs we get from
 # Mercurial or Git (which is just the beautiful Mercurial log output
 # given a particular style template, here achieved in Git via heroic
-# effort).
+# effort, though perhaps there is a simpler way).
 #
 #--------------------------------------------------------------------------
 
@@ -125,11 +125,11 @@ echo_version() {
 }
 
 echo_changelog() {
-    if test -d '.hg'; then
+    if test -n '@HG@' -a -d '.hg'; then
         vcs='hg'
-    elif test -d '.bzr'; then
+    elif test -n '@BZR@' -a -d '.bzr'; then
         vcs='bzr'
-    elif test -d '.git'; then
+    elif test -n '@GIT@' -a -d '.git'; then
         vcs='git'
     else
         echo "${progname}: `pwd` is not the root of a repository we can handle." >&2
