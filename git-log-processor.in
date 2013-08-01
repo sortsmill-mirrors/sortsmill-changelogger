@@ -29,7 +29,10 @@ my $git = '@GIT@';
 use strict;
 use warnings;
 use Getopt::Long;
+use Text::Wrap;
 use POSIX qw(strftime);
+
+$Text::Wrap::columns = 76;
 
 (my $ME = $0) =~ s|.*/||;
 
@@ -412,11 +415,12 @@ sub git_dir_option($)
 
             print "\n";
             if ($#changed_files != -1) {
-                print "\t* ";
+                my $file_list = "* ";
                 for (my $i = 0; $i < $#changed_files; $i += 1) {
-                    print $changed_files[$i], ", ";
+                    $file_list .= "$changed_files[$i], ";
                 }
-                print $changed_files[$#changed_files], ":\n";
+                $file_list .= "$changed_files[$#changed_files]:\n";
+                print wrap ("\t", "\t", $file_list);
             }
             print join ("\n", @line), "\n";
         }
