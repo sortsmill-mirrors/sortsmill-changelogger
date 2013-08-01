@@ -21,19 +21,19 @@ include $(top_srcdir)/config/sortsmill-dist-changelog.am
 aclocaldir = $(datadir)/aclocal
 
 nodist_bin_SCRIPTS =
-nodist_pkgdata_DATA =
+nodist_pkglibexec_SCRIPTS =
 dist_aclocal_DATA =
 man_MANS =
 CLEANFILES =
 MOSTLYCLEANFILES =
 
 nodist_bin_SCRIPTS += sortsmill-changelogger sortsmill-changeloggerize
-nodist_pkgdata_DATA += git-log-processor
+nodist_pkglibexec_SCRIPTS += git-log-processor
 dist_aclocal_DATA += sortsmill-changelogger.m4
 MOSTLYCLEANFILES += sortsmill-changelogger
 
-sortsmill-changelogger: sortsmill-changelogger.in
-	$(SED) -e 's|@DEFAULT_GIT_LOG_PROCESSOR@|$(pkgdatadir)/git-log-processor|g' \
+sortsmill-changelogger: sortsmill-changelogger.in Makefile
+	$(SED) -e 's|@DEFAULT_GIT_LOG_PROCESSOR@|$(pkglibexecdir)/git-log-processor|g' \
 		sortsmill-changelogger.in > $@-tmp
 	mv $@-tmp $@
 	chmod +x $@
