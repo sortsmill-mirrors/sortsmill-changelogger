@@ -32,7 +32,7 @@ MOSTLYCLEANFILES =
 
 nodist_bin_SCRIPTS += sortsmill-changelogger
 nodist_bin_SCRIPTS += sortsmill-changeloggerize
-MOSTLYCLEANFILES += sortsmill-changelogger
+MOSTLYCLEANFILES += sortsmill-changelogger sortsmill-changeloggerize
 
 nodist_pkglibexec_SCRIPTS += git-log-processor
 
