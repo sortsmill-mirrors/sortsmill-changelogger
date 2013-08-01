@@ -64,6 +64,9 @@ AC_PROG_MAKE_SET
 AC_PROG_MKDIR_P
 AC_PROG_SED
 
+AC_ARG_VAR([PERL],[Perl interpreter command])
+test -n "${PERL}" -a -z "${ac_cv_path_PERL}" && \
+      ac_cv_path_PERL="${PERL}"
 AC_CACHE_CHECK([for perl],
    [ac_cv_path_PERL],[
    AC_PATH_PROGS_FEATURE_CHECK([PERL],[perl],[
@@ -74,12 +77,23 @@ AC_CACHE_CHECK([for perl],
       fi])])
 AC_SUBST([PERL],["${ac_cv_path_PERL}"])
 
-AC_PATH_PROGS([HELP2MAN],[help2man],[])
-if test x"${HELP2MAN}" = x; then
-   AC_MSG_WARN([GNU help2man not found. No manual page will be made.])
-fi
+AC_ARG_VAR([HELP2MAN],[GNU help2man command])
+test -n "${HELP2MAN}" -a -z "${ac_cv_path_HELP2MAN}" && \
+     ac_cv_path_HELP2MAN="${HELP2MAN}"
+AC_CACHE_CHECK([for help2man],
+   [ac_cv_path_HELP2MAN],[
+   AC_PATH_PROGS_FEATURE_CHECK([HELP2MAN],[help2man],[
+      if LC_ALL=C LANG=C ${ac_path_HELP2MAN} --version 2>&1 | \
+              LC_ALL=C LANG=C ${EGREP} -q "Brendan O'Dea"; then
+         ac_cv_path_HELP2MAN=${ac_path_HELP2MAN}
+         ac_path_HELP2MAN_found=:
+      fi])])
+AC_SUBST([HELP2MAN],["${ac_cv_path_HELP2MAN}"])
 AM_CONDITIONAL([HAVE_HELP2MAN],[test x"${HELP2MAN}" != x])
 
+AC_ARG_VAR([HG],[Mercurial VCS command])
+test -n "${HG}" -a -z "${ac_cv_path_HG}" && \
+      ac_cv_path_HG="${HG}"
 AC_CACHE_CHECK([for hg],
    [ac_cv_path_HG],[
    AC_PATH_PROGS_FEATURE_CHECK([HG],[hg],[
@@ -90,6 +104,9 @@ AC_CACHE_CHECK([for hg],
       fi])])
 AC_SUBST([HG],["${ac_cv_path_HG}"])
 
+AC_ARG_VAR([BZR],[Bazaar VCS command])
+test -n "${BZR}" -a -z "${ac_cv_path_BZR}" && \
+      ac_cv_path_BZR="${BZR}"
 AC_CACHE_CHECK([for bzr],
    [ac_cv_path_BZR],[
    AC_PATH_PROGS_FEATURE_CHECK([BZR],[bzr],[
@@ -101,6 +118,9 @@ AC_CACHE_CHECK([for bzr],
       fi])])
 AC_SUBST([BZR],["${ac_cv_path_BZR}"])
 
+AC_ARG_VAR([GIT],[Git VCS command])
+test -n "${GIT}" -a -z "${ac_cv_path_GIT}" && \
+      ac_cv_path_GIT="${GIT}"
 AC_CACHE_CHECK([for git],
    [ac_cv_path_GIT],[
    AC_PATH_PROGS_FEATURE_CHECK([GIT],[git],[
