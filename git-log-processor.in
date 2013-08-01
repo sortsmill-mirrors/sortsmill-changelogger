@@ -1,5 +1,5 @@
 #! @PERL@ -w
-# -*- mode: perl; indent-tabs-mode: nil -*-
+# -*- mode: perl; indent-tabs-mode: nil; coding: utf-8 -*-
 
 # Convert git log output to ChangeLog format.
 
@@ -35,23 +35,23 @@ use POSIX qw(strftime);
 
 # use File::Coda; # http://meyering.net/code/Coda/
 END {
-  defined fileno STDOUT or return;
-  close STDOUT and return;
-  warn "$ME: failed to close standard output: $!\n";
-  $? ||= 1;
+    defined fileno STDOUT or return;
+    close STDOUT and return;
+    warn "$ME: failed to close standard output: $!\n";
+    $? ||= 1;
 }
 
 sub usage ($)
 {
-  my ($exit_code) = @_;
-  my $STREAM = ($exit_code == 0 ? *STDOUT : *STDERR);
-  if ($exit_code != 0)
+    my ($exit_code) = @_;
+    my $STREAM = ($exit_code == 0 ? *STDOUT : *STDERR);
+    if ($exit_code != 0)
     {
-      print $STREAM "Try '$ME --help' for more information.\n";
+        print $STREAM "Try '$ME --help' for more information.\n";
     }
-  else
+    else
     {
-      print $STREAM <<EOF;
+        print $STREAM <<EOF;
 Usage: $ME [OPTIONS] [ARGS]
 
 Convert git log output to ChangeLog format.  If present, any ARGS
@@ -61,7 +61,7 @@ $ME, they may be preceded by '--'.
 OPTIONS:
 
    --amend=FILE FILE maps from an SHA1 to perl code (i.e., s/old/new/) that
-                  makes a change to SHA1's commit log text or metadata.
+                  makes a change to SHA1\'s commit log text or metadata.
    --append-dot append a dot to the first line of each commit message if
                   there is no other punctuation or blank at the end.
    --no-cluster never cluster commit messages under the same date/author
@@ -121,27 +121,27 @@ s,Jim .*>,Paul Eggert <eggert\\\@cs.ucla.edu>,
 
 EOF
     }
-  exit $exit_code;
+    exit $exit_code;
 }
 
 # If the string $S is a well-behaved file name, simply return it.
 # If it contains white space, quotes, etc., quote it, and return the new string.
 sub shell_quote($)
 {
-  my ($s) = @_;
-  if ($s =~ m![^\w+/.,-]!)
+    my ($s) = @_;
+    if ($s =~ m![^\w+/.,-]!)
     {
-      # Convert each single quote to '\''
-      $s =~ s/\'/\'\\\'\'/g;
-      # Then single quote the string.
-      $s = "'$s'";
+        # Convert each single quote to '\''
+        $s =~ s/\'/\'\\\'\'/g;
+        # Then single quote the string.
+        $s = "'$s'";
     }
-  return $s;
+    return $s;
 }
 
 sub quoted_cmd(@)
 {
-  return join (' ', map {shell_quote $_} @_);
+    return join (' ', map {shell_quote $_} @_);
 }
 
 # Parse file F.
@@ -152,46 +152,46 @@ sub quoted_cmd(@)
 # Pairs must be separated by one or more blank line.
 sub parse_amend_file($)
 {
-  my ($f) = @_;
+    my ($f) = @_;
 
-  open F, '<', $f
-    or die "$ME: $f: failed to open for reading: $!\n";
+    open F, '<', $f
+        or die "$ME: $f: failed to open for reading: $!\n";
 
-  my $fail;
-  my $h = {};
-  my $in_code = 0;
-  my $sha;
-  while (defined (my $line = <F>))
+    my $fail;
+    my $h = {};
+    my $in_code = 0;
+    my $sha;
+    while (defined (my $line = <F>))
     {
-      $line =~ /^\#/
-        and next;
-      chomp $line;
-      $line eq ''
-        and $in_code = 0, next;
+        $line =~ /^\#/
+            and next;
+        chomp $line;
+        $line eq ''
+            and $in_code = 0, next;
 
-      if (!$in_code)
+        if (!$in_code)
         {
-          $line =~ /^([0-9a-fA-F]{40})$/
-            or (warn "$ME: $f:$.: invalid line; expected an SHA1\n"),
-              $fail = 1, next;
-          $sha = lc $1;
-          $in_code = 1;
-          exists $h->{$sha}
+            $line =~ /^([0-9a-fA-F]{40})$/
+                or (warn "$ME: $f:$.: invalid line; expected an SHA1\n"),
+                $fail = 1, next;
+            $sha = lc $1;
+            $in_code = 1;
+            exists $h->{$sha}
             and (warn "$ME: $f:$.: duplicate SHA1\n"),
-              $fail = 1, next;
+            $fail = 1, next;
         }
-      else
+        else
         {
-          $h->{$sha} ||= '';
-          $h->{$sha} .= "$line\n";
+            $h->{$sha} ||= '';
+            $h->{$sha} .= "$line\n";
         }
     }
-  close F;
+    close F;
 
-  $fail
-    and exit 1;
+    $fail
+        and exit 1;
 
-  return $h;
+    return $h;
 }
 
 # git_dir_option $SRCDIR
@@ -200,223 +200,244 @@ sub parse_amend_file($)
 # is undef).  Return as a list (0 or 1 element).
 sub git_dir_option($)
 {
-  my ($srcdir) = @_;
-  my @res = ();
-  if (defined $srcdir)
+    my ($srcdir) = @_;
+    my @res = ();
+    if (defined $srcdir)
     {
-      my $qdir = shell_quote $srcdir;
-      my $cmd = "cd $qdir && $git rev-parse --show-toplevel";
-      my $qcmd = shell_quote $cmd;
-      my $git_dir = qx($cmd);
-      defined $git_dir
-        or die "$ME: cannot run $qcmd: $!\n";
-      $? == 0
-        or die "$ME: $qcmd had unexpected exit code or signal ($?)\n";
-      chomp $git_dir;
-      push @res, "--git-dir=$git_dir/.git";
+        my $qdir = shell_quote $srcdir;
+        my $cmd = "cd $qdir && $git rev-parse --show-toplevel";
+        my $qcmd = shell_quote $cmd;
+        my $git_dir = qx($cmd);
+        defined $git_dir
+            or die "$ME: cannot run $qcmd: $!\n";
+        $? == 0
+            or die "$ME: $qcmd had unexpected exit code or signal ($?)\n";
+        chomp $git_dir;
+        push @res, "--git-dir=$git_dir/.git";
     }
-  @res;
+    @res;
 }
 
 {
-  my $since_date;
-  my $format_string = '%s%n%b%n';
-  my $amend_file;
-  my $append_dot = 0;
-  my $cluster = 1;
-  my $strip_tab = 0;
-  my $strip_cherry_pick = 0;
-  my $srcdir;
-  GetOptions
-    (
-     help => sub { usage 0 },
-     version => sub { print "$ME version $VERSION\n"; exit },
-     'since=s' => \$since_date,
-     'format=s' => \$format_string,
-     'amend=s' => \$amend_file,
-     'append-dot' => \$append_dot,
-     'cluster!' => \$cluster,
-     'strip-tab' => \$strip_tab,
-     'strip-cherry-pick' => \$strip_cherry_pick,
-     'srcdir=s' => \$srcdir,
-    ) or usage 1;
+    my $since_date;
+    my $format_string = '%s%n%b%n';
+    my $amend_file;
+    my $append_dot = 0;
+    my $cluster = 1;
+    my $strip_tab = 0;
+    my $strip_cherry_pick = 0;
+    my $srcdir;
+    GetOptions
+        (
+         help => sub { usage 0 },
+         version => sub { print "$ME version $VERSION\n"; exit },
+         'since=s' => \$since_date,
+         'format=s' => \$format_string,
+         'amend=s' => \$amend_file,
+         'append-dot' => \$append_dot,
+         'cluster!' => \$cluster,
+         'strip-tab' => \$strip_tab,
+         'strip-cherry-pick' => \$strip_cherry_pick,
+         'srcdir=s' => \$srcdir,
+        ) or usage 1;
 
-  defined $since_date
-    and unshift @ARGV, "--since=$since_date";
+    defined $since_date
+        and unshift @ARGV, "--since=$since_date";
 
-  # This is a hash that maps an SHA1 to perl code (i.e., s/old/new/)
-  # that makes a correction in the log or attribution of that commit.
-  my $amend_code = defined $amend_file ? parse_amend_file $amend_file : {};
+    # This is a hash that maps an SHA1 to perl code (i.e., s/old/new/)
+    # that makes a correction in the log or attribution of that commit.
+    my $amend_code = defined $amend_file ? parse_amend_file $amend_file : {};
 
-  my @cmd = ($git,
-             git_dir_option $srcdir,
-             qw(log --log-size),
-             '--pretty=format:%H:%ct  %an  <%ae>%n%n'.$format_string, @ARGV);
-  open PIPE, '-|', @cmd
-    or die ("$ME: failed to run '". quoted_cmd (@cmd) ."': $!\n"
-            . "(Is your Git too old?  Version 1.5.1 or later is required.)\n");
+    my @cmd = ($git,
+               git_dir_option $srcdir,
+               qw(log --log-size),
+               '--pretty=format:%H:%ct  %an  <%ae>%n%n'.$format_string, @ARGV);
+    open PIPE, '-|', @cmd
+        or die ("$ME: failed to run '". quoted_cmd (@cmd) ."': $!\n"
+                . "(Is your Git too old?  Version 1.5.1 or later is required.)\n");
 
-  my $prev_multi_paragraph;
-  my $prev_date_line = '';
-  my @prev_coauthors = ();
-  while (1)
+    my $prev_multi_paragraph;
+    my $prev_date_line = '';
+    my @prev_coauthors = ();
+    while (1)
     {
-      defined (my $in = <PIPE>)
-        or last;
-      $in =~ /^log size (\d+)$/
-        or die "$ME:$.: Invalid line (expected log size):\n$in";
-      my $log_nbytes = $1;
+        defined (my $in = <PIPE>)
+            or last;
+        $in =~ /^log size (\d+)$/
+            or die "$ME:$.: Invalid line (expected log size):\n$in";
+        my $log_nbytes = $1;
 
-      my $log;
-      my $n_read = read PIPE, $log, $log_nbytes;
-      $n_read == $log_nbytes
-        or die "$ME:$.: unexpected EOF\n";
+        my $log;
+        my $n_read = read PIPE, $log, $log_nbytes;
+        $n_read == $log_nbytes
+            or die "$ME:$.: unexpected EOF\n";
 
-      # Extract leading hash.
-      my ($sha, $rest) = split ':', $log, 2;
-      defined $sha
-        or die "$ME:$.: malformed log entry\n";
-      $sha =~ /^[0-9a-fA-F]{40}$/
-        or die "$ME:$.: invalid SHA1: $sha\n";
+        # Extract leading hash.
+        my ($sha, $rest) = split ':', $log, 2;
+        defined $sha
+            or die "$ME:$.: malformed log entry\n";
+        $sha =~ /^[0-9a-fA-F]{40}$/
+            or die "$ME:$.: invalid SHA1: $sha\n";
 
-      # If this commit's log requires any transformation, do it now.
-      my $code = $amend_code->{$sha};
-      if (defined $code)
+        # Find which files have changed.
+        my @diffcmd = ($git, qw(log -n 1 --name-only --pretty=format:),
+                       git_dir_option $srcdir, "$sha");
+        open DIFFPIPE, '-|', @diffcmd
+            or die ("$ME: failed to run '". quoted_cmd (@diffcmd) ."': $!\n"
+                    . "(Is your Git too old?)\n");
+        my @changed_files;
+        while (my $f = <DIFFPIPE>) {
+            chop $f;
+            push @changed_files, $f if $f !~ /^$/;
+        }
+        close DIFFPIPE;
+
+        # If this commit's log requires any transformation, do it now.
+        my $code = $amend_code->{$sha};
+        if (defined $code)
         {
-          eval 'use Safe';
-          my $s = new Safe;
-          # Put the unpreprocessed entry into "$_".
-          $_ = $rest;
+            eval 'use Safe';
+            my $s = new Safe;
+            # Put the unpreprocessed entry into "$_".
+            $_ = $rest;
 
-          # Let $code operate on it, safely.
-          my $r = $s->reval("$code")
-            or die "$ME:$.:$sha: failed to eval \"$code\":\n$@\n";
+            # Let $code operate on it, safely.
+            my $r = $s->reval("$code")
+                or die "$ME:$.:$sha: failed to eval \"$code\":\n$@\n";
 
-          # Note that we've used this entry.
-          delete $amend_code->{$sha};
+            # Note that we've used this entry.
+            delete $amend_code->{$sha};
 
-          # Update $rest upon success.
-          $rest = $_;
+            # Update $rest upon success.
+            $rest = $_;
         }
 
-      # Remove lines inserted by "git cherry-pick".
-      if ($strip_cherry_pick)
+        # Remove lines inserted by "git cherry-pick".
+        if ($strip_cherry_pick)
         {
-          $rest =~ s/^\s*Conflicts:\n.*//sm;
-          $rest =~ s/^\s*\(cherry picked from commit [\da-f]+\)\n//m;
+            $rest =~ s/^\s*Conflicts:\n.*//sm;
+            $rest =~ s/^\s*\(cherry picked from commit [\da-f]+\)\n//m;
         }
 
-      my @line = split "\n", $rest;
-      my $author_line = shift @line;
-      defined $author_line
-        or die "$ME:$.: unexpected EOF\n";
-      $author_line =~ /^(\d+)  (.*>)$/
-        or die "$ME:$.: Invalid line "
-          . "(expected date/author/email):\n$author_line\n";
+        my @line = split "\n", $rest;
+        my $author_line = shift @line;
+        defined $author_line
+            or die "$ME:$.: unexpected EOF\n";
+        $author_line =~ /^(\d+)  (.*>)$/
+            or die "$ME:$.: Invalid line "
+            . "(expected date/author/email):\n$author_line\n";
 
-      # Format 'Copyright-paperwork-exempt: Yes' as a standard ChangeLog
-      # `(tiny change)' annotation.
-      my $tiny = (grep (/^Copyright-paperwork-exempt:\s+[Yy]es$/, @line)
-                  ? '  (tiny change)' : '');
+        # Format 'Copyright-paperwork-exempt: Yes' as a standard ChangeLog
+        # `(tiny change)' annotation.
+        my $tiny = (grep (/^Copyright-paperwork-exempt:\s+[Yy]es$/, @line)
+                    ? '  (tiny change)' : '');
 
-      my $date_line = sprintf "%s  %s$tiny\n",
+        my $date_line = sprintf "%s  %s$tiny\n",
         strftime ("%F", localtime ($1)), $2;
 
-      my @coauthors = grep /^Co-authored-by:.*$/, @line;
-      # Omit meta-data lines we've already interpreted.
-      @line = grep !/^(?:Signed-off-by:[ ].*>$
+        my @coauthors = grep /^Co-authored-by:.*$/, @line;
+        # Omit meta-data lines we've already interpreted.
+        @line = grep !/^(?:Signed-off-by:[ ].*>$
                        |Co-authored-by:[ ]
                        |Copyright-paperwork-exempt:[ ]
                        )/x, @line;
 
-      # Remove leading and trailing blank lines.
-      if (@line)
+        # Remove leading and trailing blank lines.
+        if (@line)
         {
-          while ($line[0] =~ /^\s*$/) { shift @line; }
-          while ($line[$#line] =~ /^\s*$/) { pop @line; }
+            while ($line[0] =~ /^\s*$/) { shift @line; }
+            while ($line[$#line] =~ /^\s*$/) { pop @line; }
         }
 
-      # Record whether there are two or more paragraphs.
-      my $multi_paragraph = grep /^\s*$/, @line;
+        # Record whether there are two or more paragraphs.
+        my $multi_paragraph = grep /^\s*$/, @line;
 
-      # Format 'Co-authored-by: A U Thor <email@example.com>' lines in
-      # standard multi-author ChangeLog format.
-      for (@coauthors)
+        # Format 'Co-authored-by: A U Thor <email@example.com>' lines in
+        # standard multi-author ChangeLog format.
+        for (@coauthors)
         {
-          s/^Co-authored-by:\s*/\t    /;
-          s/\s*</  </;
+            s/^Co-authored-by:\s*/\t    /;
+            s/\s*</  </;
 
-          /<.*?@.*\..*>/
-            or warn "$ME: warning: missing email address for "
-              . substr ($_, 5) . "\n";
+            /<.*?@.*\..*>/
+                or warn "$ME: warning: missing email address for "
+                . substr ($_, 5) . "\n";
         }
 
-      # If clustering of commit messages has been disabled, if this header
-      # would be different from the previous date/name/email/coauthors header,
-      # or if this or the previous entry consists of two or more paragraphs,
-      # then print the header.
-      if ( ! $cluster
-          || $date_line ne $prev_date_line
-          || "@coauthors" ne "@prev_coauthors"
-          || $multi_paragraph
-          || $prev_multi_paragraph)
+        # If clustering of commit messages has been disabled, if this header
+        # would be different from the previous date/name/email/coauthors header,
+        # or if this or the previous entry consists of two or more paragraphs,
+        # then print the header.
+        if ( ! $cluster
+             || $date_line ne $prev_date_line
+             || "@coauthors" ne "@prev_coauthors"
+             || $multi_paragraph
+             || $prev_multi_paragraph)
         {
-          $prev_date_line eq ''
-            or print "\n";
-          print $date_line;
-          @coauthors
-            and print join ("\n", @coauthors), "\n";
+            $prev_date_line eq ''
+                or print "\n";
+            print $date_line;
+            @coauthors
+                and print join ("\n", @coauthors), "\n";
         }
-      $prev_date_line = $date_line;
-      @prev_coauthors = @coauthors;
-      $prev_multi_paragraph = $multi_paragraph;
+        $prev_date_line = $date_line;
+        @prev_coauthors = @coauthors;
+        $prev_multi_paragraph = $multi_paragraph;
 
-      # If there were any lines
-      if (@line == 0)
+        # If there were any lines
+        if (@line == 0)
         {
-          warn "$ME: warning: empty commit message:\n  $date_line\n";
+            warn "$ME: warning: empty commit message:\n  $date_line\n";
         }
-      else
+        else
         {
-          if ($append_dot)
+            if ($append_dot)
             {
-              # If the first line of the message has enough room, then
-              if (length $line[0] < 72)
+                # If the first line of the message has enough room, then
+                if (length $line[0] < 72)
                 {
-                  # append a dot if there is no other punctuation or blank
-                  # at the end.
-                  $line[0] =~ /[[:punct:]\s]$/
-                    or $line[0] .= '.';
+                    # append a dot if there is no other punctuation or blank
+                    # at the end.
+                    $line[0] =~ /[[:punct:]\s]$/
+                        or $line[0] .= '.';
                 }
             }
 
-          # Remove one additional leading TAB from each line.
-          $strip_tab
-            and map { s/^\t// } @line;
+            # Remove one additional leading TAB from each line.
+            $strip_tab
+                and map { s/^\t// } @line;
 
-          # Prefix each non-empty line with a TAB.
-          @line = map { length $_ ? "\t$_" : '' } @line;
+            # Prefix each non-empty line with a TAB.
+            @line = map { length $_ ? "\t$_" : '' } @line;
 
-          print "\n", join ("\n", @line), "\n";
+            print "\n";
+            if ($#changed_files != -1) {
+                print "\t* ";
+                for (my $i = 0; $i < $#changed_files; $i += 1) {
+                    print $changed_files[$i], ", ";
+                }
+                print $changed_files[$#changed_files], ":\n";
+            }
+            print join ("\n", @line), "\n";
         }
 
-      defined ($in = <PIPE>)
-        or last;
-      $in ne "\n"
-        and die "$ME:$.: unexpected line:\n$in";
+        defined ($in = <PIPE>)
+            or last;
+        $in ne "\n"
+            and die "$ME:$.: unexpected line:\n$in";
     }
 
-  close PIPE
-    or die "$ME: error closing pipe from " . quoted_cmd (@cmd) . "\n";
-  # FIXME-someday: include $PROCESS_STATUS in the diagnostic
+    close PIPE
+        or die "$ME: error closing pipe from " . quoted_cmd (@cmd) . "\n";
+    # FIXME-someday: include $PROCESS_STATUS in the diagnostic
 
-  # Complain about any unused entry in the --amend=F specified file.
-  my $fail = 0;
-  foreach my $sha (keys %$amend_code)
+    # Complain about any unused entry in the --amend=F specified file.
+    my $fail = 0;
+    foreach my $sha (keys %$amend_code)
     {
-      warn "$ME:$amend_file: unused entry: $sha\n";
-      $fail = 1;
+        warn "$ME:$amend_file: unused entry: $sha\n";
+        $fail = 1;
     }
 
-  exit $fail;
+    exit $fail;
 }
