@@ -6,10 +6,10 @@ NAME
        sortsmill-changelogger - Sorts Mill Changelogger
 
 SYNOPSIS
-       sortsmill-changelogger [OPTION]...
+       sortsmill-changelogger [IGNORED]... [OPTION]...
 
 DESCRIPTION
-       Creates a GNU-style ChangeLog file from a version control log.
+       Create a GNU-style ChangeLog file from a version control log.
 
        -C DIR change to repository base directory DIR
 
@@ -17,8 +17,16 @@ DESCRIPTION
 
        -V     output version information and exit
 
-       Unless you use the '-C' flag, sortsmill-changelogger expects to be run
-       in a repository's base directory.
+       The optional arguments `IGNORED' are ignored.
+
+       Unless you use the -C flag, sortsmill-changelogger expects to be run in
+       a repository's base directory.
+
+       The environment variable SORTSMILL_HG_LOG_STYLE can be used to specify
+       an alternative Mercurial log style.
+
+       The environment variable SORTSMILL_GIT_LOG_PROCESSOR can be used to
+       specify an alternative git log processor.
 
 AUTHOR
        Written by Barry Schwartz.
@@ -39,4 +47,4 @@ COPYRIGHT
 
 
 
-Sorts Mill                         July 2013         SORTSMILL-CHANGELOGGER(1)
+Sorts Mill                        August 2013        SORTSMILL-CHANGELOGGER(1)
