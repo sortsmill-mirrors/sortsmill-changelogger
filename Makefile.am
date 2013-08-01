@@ -16,7 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
-include $(top_srcdir)/config/sortsmill-dist-changelog.am
+# The minus sign is needed because
+# $(top_srcdir)/config/sortsmill-dist-changelog.am does not exist yet
+# during the initial autoreconf.
+-include $(top_srcdir)/config/sortsmill-dist-changelog.am
 
 aclocaldir = $(datadir)/aclocal
 
