@@ -159,8 +159,10 @@ AC_CONFIG_FILES([git-log-processor],
 AC_CONFIG_COMMANDS([config/sortsmill-dist-changelog.am],[
    ${SHELL} "${ac_abs_top_srcdir}/sortsmill-changeloggerize.in" -d "${ac_abs_top_srcdir}/config"
 ])
-AC_SUBST([SORTSMILL_CHANGELOGGER],
-   ["SORTSMILL_GIT_LOG_PROCESSOR=\"\@S|@(top_builddir)/git-log-processor\" ${SHELL} \"\@S|@(top_builddir)/sortsmill-changelogger.in\""])
+AC_SUBST([SORTSMILL_CHANGELOGGER],[dnl
+"SORTSMILL_HG_LOG_STYLE=\"\@S|@(abs_top_srcdir)/map-cmdline.sortsmill-changelog\" dnl
+SORTSMILL_GIT_LOG_PROCESSOR=\"\@S|@(top_builddir)/git-log-processor\" dnl
+${SHELL} \"\@S|@(top_builddir)/sortsmill-changelogger.in\""])
 
 AC_OUTPUT
 

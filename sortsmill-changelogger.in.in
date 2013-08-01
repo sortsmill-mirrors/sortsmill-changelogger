@@ -46,6 +46,10 @@ while test "${ignoring}" = yes; do
     fi
 done
 
+if test -z "${SORTSMILL_HG_LOG_STYLE}"; then
+    SORTSMILL_HG_LOG_STYLE='@DEFAULT_HG_LOG_STYLE@'
+fi
+
 git_log_processor_wanted=no
 if test -n "${SORTSMILL_GIT_LOG_PROCESSOR}"; then
     git_log_processor_wanted=yes
@@ -90,11 +94,14 @@ echo_help() {
     echo ""
     echo "The optional arguments \`IGNORED' are ignored."
     echo ""
-    echo "The environment variable SORTSMILL_GIT_LOG_PROCESSOR"
-    echo "can be used to specify an alternative git log processor."
-    echo ""
     echo "Unless you use the -C flag, ${progname} expects to be run"
     echo "in a repository's base directory."
+    echo ""
+    echo "The environment variable SORTSMILL_HG_LOG_STYLE"
+    echo "can be used to specify an alternative Mercurial log style."
+    echo ""
+    echo "The environment variable SORTSMILL_GIT_LOG_PROCESSOR"
+    echo "can be used to specify an alternative git log processor."
     echo ""
     echo "Report @PACKAGE@ bugs at @PACKAGE_BUGREPORT@"
     echo "@PACKAGE_NAME@ home page: @PACKAGE_URL@"
@@ -125,7 +132,7 @@ echo_changelog() {
 
     case "${vcs}" in
         hg)
-            @HG@ log --style=changelog
+            @HG@ log --style="${SORTSMILL_HG_LOG_STYLE}"
             ;;
         bzr)
             # FIXME: This does not group changes by date. Can we do

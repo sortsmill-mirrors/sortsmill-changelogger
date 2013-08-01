@@ -22,6 +22,7 @@ aclocaldir = $(datadir)/aclocal
 
 nodist_bin_SCRIPTS =
 nodist_pkglibexec_SCRIPTS =
+dist_pkgdata_DATA =
 dist_aclocal_DATA =
 man_MANS =
 CLEANFILES =
@@ -29,11 +30,14 @@ MOSTLYCLEANFILES =
 
 nodist_bin_SCRIPTS += sortsmill-changelogger sortsmill-changeloggerize
 nodist_pkglibexec_SCRIPTS += git-log-processor
+dist_pkgdata_DATA += map-cmdline.sortsmill-changelog
 dist_aclocal_DATA += sortsmill-changelogger.m4
 MOSTLYCLEANFILES += sortsmill-changelogger
 
 sortsmill-changelogger: sortsmill-changelogger.in Makefile
-	$(SED) -e 's|@DEFAULT_GIT_LOG_PROCESSOR@|$(pkglibexecdir)/git-log-processor|g' \
+	$(SED) \
+		-e 's|@DEFAULT_GIT_LOG_PROCESSOR@|$(pkglibexecdir)/git-log-processor|g' \
+		-e 's|@DEFAULT_HG_LOG_STYLE@|$(pkgdatadir)/map-cmdline.sortsmill-changelog|g' \
 		sortsmill-changelogger.in > $@-tmp
 	mv $@-tmp $@
 	chmod +x $@
