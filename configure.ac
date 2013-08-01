@@ -26,7 +26,6 @@ AC_INIT([Sorts Mill Changelogger],
 
 AC_CONFIG_SRCDIR([sortsmill-changelogger.in.in])
 
-AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([config])        dnl Where things like install-sh go.
 AC_CANONICAL_BUILD                 dnl On what platform are we compiling?
 AC_CANONICAL_HOST                  dnl For what platform are we compiling?
@@ -65,13 +64,23 @@ AC_PROG_MAKE_SET
 AC_PROG_MKDIR_P
 AC_PROG_SED
 
+AC_CACHE_CHECK([for perl],
+   [ac_cv_path_PERL],[
+   AC_PATH_PROGS_FEATURE_CHECK([PERL],[perl],[
+      if LC_ALL=C LANG=C ${ac_path_PERL} --version 2>&1 | \
+              LC_ALL=C LANG=C ${EGREP} -q -i '^This is perl'; then
+         ac_cv_path_PERL=${ac_path_PERL}
+         ac_path_PERL_found=:
+      fi])])
+AC_SUBST([PERL],["${ac_cv_path_PERL}"])
+
 AC_PATH_PROGS([HELP2MAN],[help2man],[])
 if test x"${HELP2MAN}" = x; then
    AC_MSG_WARN([GNU help2man not found. No manual page will be made.])
 fi
 AM_CONDITIONAL([HAVE_HELP2MAN],[test x"${HELP2MAN}" != x])
 
-AC_CACHE_CHECK([for `hg log'],
+AC_CACHE_CHECK([for hg],
    [ac_cv_path_HG],[
    AC_PATH_PROGS_FEATURE_CHECK([HG],[hg],[
       if LC_ALL=C LANG=C ${ac_path_HG} log --help 2>&1 | \
@@ -79,8 +88,9 @@ AC_CACHE_CHECK([for `hg log'],
          ac_cv_path_HG=${ac_path_HG}
          ac_path_HG_found=:
       fi])])
+AC_SUBST([HG],["${ac_cv_path_HG}"])
 
-AC_CACHE_CHECK([for `bzr log'],
+AC_CACHE_CHECK([for bzr],
    [ac_cv_path_BZR],[
    AC_PATH_PROGS_FEATURE_CHECK([BZR],[bzr],[
       dnl Use m4sh quadrigraphs:  [ == @<:@   ] == @:>@
@@ -89,8 +99,9 @@ AC_CACHE_CHECK([for `bzr log'],
          ac_cv_path_BZR=${ac_path_BZR}
          ac_path_BZR_found=:
       fi])])
+AC_SUBST([BZR],["${ac_cv_path_BZR}"])
 
-AC_CACHE_CHECK([for `git log'],
+AC_CACHE_CHECK([for git],
    [ac_cv_path_GIT],[
    AC_PATH_PROGS_FEATURE_CHECK([GIT],[git],[
       if LC_ALL=C LANG=C ${ac_path_GIT} help log 2>&1 | \
@@ -98,39 +109,21 @@ AC_CACHE_CHECK([for `git log'],
          ac_cv_path_GIT=${ac_path_GIT}
          ac_path_GIT_found=:
       fi])])
+AC_SUBST([GIT],["${ac_cv_path_GIT}"])
 
-if test -z "${ac_cv_path_HG}"; then
-   AC_MSG_WARN([`hg log' not found. Hg support will be left out.])
-   HG=""
-   HG_LOG=""
-else
-   HG="${ac_cv_path_HG}"
-   HG_LOG="${HG} log"
+if test -z "${HG}"; then
+   AC_MSG_WARN([`hg' not found. Mercurial support will be left out.])
 fi
-AC_SUBST([HG])
-AC_SUBST([HG_LOG])
-
-if test -z "${ac_cv_path_BZR}"; then
-   AC_MSG_WARN([`bzr log' not found. Bzr support will be left out.])
-   BZR=""
-   BZR_LOG=""
-else
-   BZR="${ac_cv_path_BZR}"
-   BZR_LOG="${BZR} log"
+if test -z "${BZR}"; then
+   AC_MSG_WARN([`bzr' not found. Bazaar support will be left out.])
 fi
-AC_SUBST([BZR])
-AC_SUBST([BZR_LOG])
-
-if test -z "${ac_cv_path_GIT}"; then
-   AC_MSG_WARN([`git log' not found. Git support will be left out.])
-   GIT=""
-   GIT_LOG=""
-else
-   GIT="${ac_cv_path_GIT}"
-   GIT_LOG="${GIT} log"
+if test -z "${GIT}"; then
+   AC_MSG_WARN([`git' not found. Git support will be left out.])
+   if test -z "${PERL}"; then
+      AC_MSG_WARN([`perl' not found. Git support will be left out.])
+      GIT=""
+   fi
 fi
-AC_SUBST([GIT])
-AC_SUBST([GIT_LOG])
 
 if test -z "${HG}" -a -z "${BZR}" -a -z "${GIT}"; then
    AC_MSG_WARN([No supported version control systems found.
@@ -159,12 +152,15 @@ AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([sortsmill-changelogger.in])
 AC_CONFIG_FILES([sortsmill-changeloggerize],
         [chmod +x sortsmill-changeloggerize])
+AC_CONFIG_FILES([git-log-processor],
+        [chmod +x git-log-processor])
 
 # Bootstrap our own changeloggerization.
 AC_CONFIG_COMMANDS([config/sortsmill-dist-changelog.am],[
-   ${SHELL} sortsmill-changeloggerize.in -d config
+   ${SHELL} "${ac_abs_top_srcdir}/sortsmill-changeloggerize.in" -d "${ac_abs_top_srcdir}/config"
 ])
-AC_SUBST([SORTSMILL_CHANGELOGGER],["\@S|@(top_builddir)/sortsmill-changelogger"])
+AC_SUBST([SORTSMILL_CHANGELOGGER],
+   ["SORTSMILL_GIT_LOG_PROCESSOR=\"\@S|@(top_builddir)/git-log-processor\" ${SHELL} \"\@S|@(top_builddir)/sortsmill-changelogger.in\""])
 
 AC_OUTPUT
 

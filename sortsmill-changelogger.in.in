@@ -46,6 +46,12 @@ while test "${ignoring}" = yes; do
     fi
 done
 
+git_log_processor_wanted=no
+if test -n "${SORTSMILL_GIT_LOG_PROCESSOR}"; then
+    git_log_processor_wanted=yes
+    git_log_processor="${SORTSMILL_GIT_LOG_PROCESSOR}"
+fi
+
 changedir_wanted=no
 help_wanted=no
 version_wanted=no
@@ -78,13 +84,16 @@ echo_help() {
     echo "Usage: ${progname} [IGNORED]... [OPTION]..."
     echo "Create a GNU-style ChangeLog file from a version control log."
     echo ""
-    echo "  -C DIR   change to repository base directory DIR"
-    echo "  -h       display this help and exit"
-    echo "  -V       output version information and exit"
+    echo "  -C DIR      change to repository base directory DIR"
+    echo "  -h          display this help and exit"
+    echo "  -V          output version information and exit"
     echo ""
     echo "The optional arguments \`IGNORED' are ignored."
     echo ""
-    echo "Unless you use the '-C' flag, ${progname} expects to be run"
+    echo "The environment variable SORTSMILL_GIT_LOG_PROCESSOR"
+    echo "can be used to specify an alternative git log processor."
+    echo ""
+    echo "Unless you use the -C flag, ${progname} expects to be run"
     echo "in a repository's base directory."
     echo ""
     echo "Report @PACKAGE@ bugs at @PACKAGE_BUGREPORT@"
@@ -116,15 +125,19 @@ echo_changelog() {
 
     case "${vcs}" in
         hg)
-            @HG_LOG@ --style=changelog
+            @HG@ log --style=changelog
             ;;
         bzr)
             # FIXME: This does not group changes by date. Can we do
             # better?
-            @BZR_LOG@ --gnu-changelog
+            @BZR@ log --gnu-changelog
             ;;
         git)
-            @SHELL@ @GITLOG_TO_CHANGELOG@
+            if test x"${git_log_processor_wanted}" = xyes; then
+                ${git_log_processor}
+            else
+                @DEFAULT_GIT_LOG_PROCESSOR@
+            fi
             ;;
         *)
             echo "Internal error" >&2

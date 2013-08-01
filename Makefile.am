@@ -18,27 +18,22 @@
 
 include $(top_srcdir)/config/sortsmill-dist-changelog.am
 
-ACLOCAL_AMFLAGS = -I m4
-
 aclocaldir = $(datadir)/aclocal
 
 nodist_bin_SCRIPTS =
-dist_pkgdata_DATA =
+nodist_pkgdata_DATA =
 dist_aclocal_DATA =
 man_MANS =
-EXTRA_DIST =
 CLEANFILES =
 MOSTLYCLEANFILES =
 
-EXTRA_DIST += m4/gnulib-cache.m4
-
 nodist_bin_SCRIPTS += sortsmill-changelogger sortsmill-changeloggerize
-dist_pkgdata_DATA += config/gitlog-to-changelog
+nodist_pkgdata_DATA += git-log-processor
 dist_aclocal_DATA += sortsmill-changelogger.m4
 MOSTLYCLEANFILES += sortsmill-changelogger
 
 sortsmill-changelogger: sortsmill-changelogger.in
-	$(SED) -e 's|@GITLOG_TO_CHANGELOG@|$(pkgdatadir)/gitlog-to-changelog|g' \
+	$(SED) -e 's|@DEFAULT_GIT_LOG_PROCESSOR@|$(pkgdatadir)/git-log-processor|g' \
 		sortsmill-changelogger.in > $@-tmp
 	mv $@-tmp $@
 	chmod +x $@

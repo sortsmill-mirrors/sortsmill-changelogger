@@ -105,7 +105,7 @@ dist-hook: dist-changelog
 # banner message will be echoed. The ChangeLog you actually get,
 # however, should be the same as what you would get from
 # @code{make dist}.
-dist-changelog: \$(SORTSMILL_CHANGELOGGER)
+dist-changelog:
 	@if \$(SORTSMILL_CHANGELOGGER) /bin/false -C \$(top_srcdir) > ChangeLog-tmp; then \\
 		mv -f ChangeLog-tmp \$(distdir)/ChangeLog; \\
 	else \\
