@@ -65,10 +65,6 @@ AC_PROG_MAKE_SET
 AC_PROG_MKDIR_P
 AC_PROG_SED
 
-# This is here simply to pull in the latest version of the macro from
-# the Sorts Mill Autoconf Archive, for redistribution in this package.
-StM_PROG_SORTSMILL_CHANGELOGGER
-
 m4_define([my_m4_first],[m4_car(m4_unquote(m4_split(m4_strip($1))))])
 
 AC_DEFUN([my_PATH_PROGS_CACHED_AND_PRECIOUS_WITH_DISABLE],[
