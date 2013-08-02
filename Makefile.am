@@ -20,12 +20,9 @@ include sortsmill-dist-changelog.am
 
 ACLOCAL_AMFLAGS = -I m4 --install
 
-aclocaldir = $(datadir)/aclocal
-
 nodist_bin_SCRIPTS =
 nodist_pkglibexec_SCRIPTS =
 dist_pkgdata_DATA =
-dist_aclocal_DATA =
 man_MANS =
 CLEANFILES =
 MOSTLYCLEANFILES =
@@ -38,8 +35,6 @@ nodist_pkglibexec_SCRIPTS += git-log-processor
 
 dist_pkgdata_DATA += sortsmill-dist-changelog.am
 dist_pkgdata_DATA += map-cmdline.sortsmill-changelog
-
-dist_aclocal_DATA += m4/stm_prog_sortsmill_changelogger.m4
 
 sortsmill-changelogger: sortsmill-changelogger.in Makefile
 	$(SED) \
