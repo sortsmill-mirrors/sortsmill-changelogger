@@ -63,10 +63,11 @@ if test -n "${SORTSMILL_GIT_LOG_PROCESSOR}"; then
 fi
 
 changedir_wanted=no
+limit_number_wanted=no
 help_wanted=no
 version_wanted=no
 
-while getopts 'C:hV' flag; do
+while getopts 'C:l:hV' flag; do
     case "${flag}" in
         C)
             changedir_wanted=yes
@@ -76,6 +77,10 @@ while getopts 'C:hV' flag; do
                 echo "Try '""${progname}"" -h' for more information."
                 exit 3
             fi
+            ;;
+        l)
+            limit_number_wanted=yes
+            limit_number="${OPTARG}"
             ;;
         h)
             help_wanted=yes
@@ -95,6 +100,7 @@ echo_help() {
     echo "Create a GNU-style ChangeLog file from a version control log."
     echo ""
     echo "  -C DIR      change to repository base directory DIR"
+    echo "  -l ENTRIES  limit the number of changes displayed"
     echo "  -h          display this help and exit"
     echo "  -V          output version information and exit"
     echo ""
@@ -138,18 +144,28 @@ echo_changelog() {
 
     case "${vcs}" in
         hg)
-            @HG@ log --style="${SORTSMILL_HG_LOG_STYLE}"
+            limit=""
+            test x"${limit_number_wanted}" = xyes && \
+                limit="--limit=${limit_number}"
+            @HG@ log --style="${SORTSMILL_HG_LOG_STYLE}" ${limit}
             ;;
         bzr)
+            limit=""
+            test x"${limit_number_wanted}" = xyes && \
+                limit="--limit=${limit_number}"
+
             # FIXME: This does not group changes by date. Can we do
             # better?
-            @BZR@ log --gnu-changelog
+            @BZR@ log --gnu-changelog ${limit}
             ;;
         git)
+            limit=""
+            test x"${limit_number_wanted}" = xyes && \
+                limit="--max-count=${limit_number}"
             if test x"${git_log_processor_wanted}" = xyes; then
-                ${git_log_processor}
+                ${git_log_processor} -- ${limit}
             else
-                @DEFAULT_GIT_LOG_PROCESSOR@
+                @DEFAULT_GIT_LOG_PROCESSOR@ -- ${limit}
             fi
             ;;
         *)

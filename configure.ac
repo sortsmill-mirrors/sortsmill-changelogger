@@ -84,6 +84,7 @@ StM_PATH_PROGS_CACHED_AND_PRECIOUS([PERL],[Perl interpreter command],
       fi
    ])
 
+# FIXME: Put this in the Autoconf Archive.
 StM_PATH_PROGS_CACHED_AND_PRECIOUS([HELP2MAN],[GNU help2man command],
    [help2man],[
       if LC_ALL=C LANG=C ${ac_path_HELP2MAN} --version 2>&1 | \
