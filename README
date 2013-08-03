@@ -13,6 +13,9 @@ DESCRIPTION
 
        -C DIR change to repository base directory DIR
 
+       -l ENTRIES
+              limit the number of changes displayed
+
        -h     display this help and exit
 
        -V     output version information and exit
