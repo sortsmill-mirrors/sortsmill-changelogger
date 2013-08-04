@@ -13,8 +13,7 @@ DESCRIPTION
 
        -C DIR change to repository base directory DIR
 
-       -l ENTRIES
-              limit the number of changes displayed
+       -l N   limit output to no more than N changes
 
        -h     display this help and exit
 

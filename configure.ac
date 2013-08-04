@@ -64,6 +64,10 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_MKDIR_P
 AC_PROG_SED
+StM_PROG_PERL
+
+StM_PROG_HELP2MAN
+AM_CONDITIONAL([HAVE_HELP2MAN],[test x"${HELP2MAN}" != x])
 
 m4_define([my_m4_first],[m4_car(m4_unquote(m4_split(m4_strip($1))))])
 
@@ -74,26 +78,6 @@ else
    AC_MSG_WARN(my_m4_first($3)[ disabled])
    $1=""
 fi])
-
-StM_PATH_PROGS_CACHED_AND_PRECIOUS([PERL],[Perl interpreter command],
-   [perl],[
-      if LC_ALL=C LANG=C ${ac_path_PERL} --version 2>&1 | \
-              LC_ALL=C LANG=C ${EGREP} -q -i '^This is perl'; then
-         ac_cv_path_PERL=${ac_path_PERL}
-         ac_path_PERL_found=:
-      fi
-   ])
-
-# FIXME: Put this in the Autoconf Archive.
-StM_PATH_PROGS_CACHED_AND_PRECIOUS([HELP2MAN],[GNU help2man command],
-   [help2man],[
-      if LC_ALL=C LANG=C ${ac_path_HELP2MAN} --version 2>&1 | \
-              LC_ALL=C LANG=C ${EGREP} -q "Brendan O'Dea"; then
-         ac_cv_path_HELP2MAN=${ac_path_HELP2MAN}
-         ac_path_HELP2MAN_found=:
-      fi
-   ])
-AM_CONDITIONAL([HAVE_HELP2MAN],[test x"${HELP2MAN}" != x])
 
 my_PATH_PROGS_CACHED_AND_PRECIOUS_WITH_DISABLE([HG],[Mercurial VCS command],[hg],[
    if LC_ALL=C LANG=C ${ac_path_HG} log --help 2>&1 | \
@@ -153,6 +137,8 @@ fi
 # Checks for library functions.
 
 #--------------------------------------------------------------------------
+
+StM_MAKE_README([make_readme],[sortsmill-changelogger.1])
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([sortsmill-changelogger.in])
