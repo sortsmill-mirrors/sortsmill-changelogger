@@ -30,12 +30,9 @@ CLEANFILES =
 MOSTLYCLEANFILES =
 
 nodist_bin_SCRIPTS += sortsmill-changelogger
-nodist_bin_SCRIPTS += sortsmill-changeloggerize
-MOSTLYCLEANFILES += sortsmill-changelogger sortsmill-changeloggerize
+MOSTLYCLEANFILES += sortsmill-changelogger
 
 nodist_pkglibexec_SCRIPTS += git-log-processor
-
-dist_pkgdata_DATA += sortsmill-dist-changelog.am
 dist_pkgdata_DATA += map-cmdline.sortsmill-changelog
 
 sortsmill-changelogger: sortsmill-changelogger.in Makefile
@@ -46,17 +43,10 @@ sortsmill-changelogger: sortsmill-changelogger.in Makefile
 	mv $@-tmp $@
 	chmod +x $@
 
-sortsmill-changeloggerize: sortsmill-changeloggerize.in Makefile
-	$(SED) \
-		-e 's|@DEFAULT_DIST_CHANGELOG_AM@|$(pkgdatadir)/sortsmill-dist-changelog.am|g' \
-		sortsmill-changeloggerize.in > $@-tmp
-	mv $@-tmp $@
-	chmod +x $@
-
 if HAVE_HELP2MAN
 
-man_MANS += sortsmill-changelogger.1 sortsmill-changeloggerize.1
-CLEANFILES += sortsmill-changelogger.1 sortsmill-changeloggerize.1
+man_MANS += sortsmill-changelogger.1
+CLEANFILES += sortsmill-changelogger.1
 
 MY_HELP2MAN = $(HELP2MAN) --no-info --output=$@				\
 				--help-option='-h' --version-option='-V'	\
@@ -65,10 +55,6 @@ MY_HELP2MAN = $(HELP2MAN) --no-info --output=$@				\
 sortsmill-changelogger.1: sortsmill-changelogger
 	$(MY_HELP2MAN) --name='Sorts Mill Changelogger'		\
 		./sortsmill-changelogger
-
-sortsmill-changeloggerize.1: sortsmill-changelogger
-	$(MY_HELP2MAN) --name='Sorts Mill Changeloggerize'	\
-		./sortsmill-changeloggerize
 
 endif HAVE_HELP2MAN
 

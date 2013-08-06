@@ -149,7 +149,6 @@ StM_MAKE_README([make_readme],[sortsmill-changelogger.1])
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([sortsmill-changelogger.in])
-AC_CONFIG_FILES([sortsmill-changeloggerize.in])
 AC_CONFIG_FILES([git-log-processor],
         [chmod +x git-log-processor])
 
