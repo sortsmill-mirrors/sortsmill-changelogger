@@ -16,9 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, see <http://www.gnu.org/licenses/>.
 
-include sortsmill-dist-changelog.am
-
 ACLOCAL_AMFLAGS = -I m4 --install
+
+# Bootstrapped changeloggerization.
+dist-hook: dist-changelog
+@dist_changelog_rules@
 
 nodist_bin_SCRIPTS =
 nodist_pkglibexec_SCRIPTS =

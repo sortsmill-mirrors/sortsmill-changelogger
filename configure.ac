@@ -138,6 +138,13 @@ fi
 
 #--------------------------------------------------------------------------
 
+# Bootstrap our own changeloggerization.
+SORTSMILL_CHANGELOGGER="dnl
+SORTSMILL_HG_LOG_STYLE=\"\@S|@(abs_top_srcdir)/map-cmdline.sortsmill-changelog\" dnl
+SORTSMILL_GIT_LOG_PROCESSOR=\"\@S|@(abs_top_builddir)/git-log-processor\" dnl
+${SHELL} \"\@S|@(top_builddir)/sortsmill-changelogger.in\""
+StM_CHANGELOGGERIZE
+
 StM_MAKE_README([make_readme],[sortsmill-changelogger.1])
 
 AC_CONFIG_FILES([Makefile])
@@ -145,12 +152,6 @@ AC_CONFIG_FILES([sortsmill-changelogger.in])
 AC_CONFIG_FILES([sortsmill-changeloggerize.in])
 AC_CONFIG_FILES([git-log-processor],
         [chmod +x git-log-processor])
-
-# Bootstrap our own changeloggerization.
-AC_SUBST([SORTSMILL_CHANGELOGGER],[dnl
-"SORTSMILL_HG_LOG_STYLE=\"\@S|@(abs_top_srcdir)/map-cmdline.sortsmill-changelog\" dnl
-SORTSMILL_GIT_LOG_PROCESSOR=\"\@S|@(abs_top_builddir)/git-log-processor\" dnl
-${SHELL} \"\@S|@(top_builddir)/sortsmill-changelogger.in\""])
 
 AC_OUTPUT
 
