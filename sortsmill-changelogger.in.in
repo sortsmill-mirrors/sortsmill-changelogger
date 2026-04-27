@@ -1,9 +1,9 @@
 #!@SHELL@
 # -*- sh -*-
 
-copyright_string="Copyright (C) 2013 Khaled Hosny and Barry Schwartz"
+copyright_string="Copyright (C) 2013, 2026 Khaled Hosny and Barry Schwartz"
 
-# Copyright (C) 2013 Khaled Hosny and Barry Schwartz
+# Copyright (C) 2013, 2026 Khaled Hosny and Barry Schwartz
 # This file is part of Sorts Mill Changelogger.
 # 
 # Sorts Mill Changelogger is free software; you can redistribute it and/or modify
@@ -64,10 +64,11 @@ fi
 
 changedir_wanted=no
 limit_number_wanted=no
+graph_wanted=no
 help_wanted=no
 version_wanted=no
 
-while getopts 'C:l:hV' flag; do
+while getopts 'C:l:GhV' flag; do
     case "${flag}" in
         C)
             changedir_wanted=yes
@@ -81,6 +82,8 @@ while getopts 'C:l:hV' flag; do
         l)
             limit_number_wanted=yes
             limit_number="${OPTARG}"
+            ;;
+        G)  graph_wanted=yes
             ;;
         h)
             help_wanted=yes
@@ -101,6 +104,7 @@ echo_help() {
     echo ""
     echo "  -C DIR      change to repository base directory DIR"
     echo "  -l N        limit output to no more than N changes"
+    echo "  -G          if using Mercurial, display a graph"
     echo "  -h          display this help and exit"
     echo "  -V          output version information and exit"
     echo ""
@@ -110,7 +114,8 @@ echo_help() {
     echo "in a repository's base directory."
     echo ""
     echo "The environment variable SORTSMILL_HG_LOG_STYLE"
-    echo "can be used to specify an alternative Mercurial log style."
+    echo "can be used to specify an alternative Mercurial log style"
+    echo "or template."
     echo ""
     echo "The environment variable SORTSMILL_GIT_LOG_PROCESSOR"
     echo "can be used to specify an alternative git log processor."
@@ -147,7 +152,9 @@ echo_changelog() {
             limit=""
             test x"${limit_number_wanted}" = xyes && \
                 limit="--limit=${limit_number}"
-            @HG@ log --style="${SORTSMILL_HG_LOG_STYLE}" ${limit}
+            graph=""
+            test x"${graph_wanted}" = xyes && graph="-G"
+            @HG@ log ${graph} --template="${SORTSMILL_HG_LOG_STYLE}" ${limit}
             ;;
         bzr)
             limit=""
